@@ -147,12 +147,12 @@ jobs:
         run: |
           brew install ffmpeg pkg-config
 
-      - name: Install frontend dependencies
-        shell: bash
-        working-directory: ./screenpipe-app-tauri
-        run: |
-          ls . 
-          bun install
+      # - name: Install frontend dependencies
+      #   shell: bash
+      #   working-directory: ./screenpipe-app-tauri
+      #   run: |
+      #     ls . 
+      #     bun install
 
       # - name: Setup tmate session # HACK
       #   if: matrix.platform == 'windows-latest'

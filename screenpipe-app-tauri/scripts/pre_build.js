@@ -55,7 +55,6 @@ const config = {
 			'libasound2-dev', // cpal
 			'libomp-dev', // OpenMP in ggml.ai
 			'libstdc++-12-dev', //ROCm
-			'libxdo-dev',
 		],
 	},
 	macos: {

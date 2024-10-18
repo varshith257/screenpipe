@@ -695,18 +695,26 @@ async function installOllamaSidecar() {
 
 		console.log('Downloading Ollama...');
 		if (platform === 'windows') {
+			console.log(`1) Downloading from URL: ${ollamaUrl} to ${downloadPath}`);
+
 			await $`powershell -command "Invoke-WebRequest -Uri '${ollamaUrl}' -OutFile '${downloadPath}'"`;
 		} else {
+			console.log(`2) Downloading from URL: ${ollamaUrl} to ${downloadPath}`);
+
 			await $`wget -q --show-progress ${ollamaUrl} -O ${downloadPath}`;
 		}
 
 		console.log('Extracting Ollama...');
 		if (platform === 'windows') {
+			if (await fs.exists(downloadPath)) {
 			await $`powershell -command "Expand-Archive -Path '${downloadPath}' -DestinationPath '${ollamaDir}'"`;
 			await fs.rename(path.join(ollamaDir, 'ollama.exe'), path.join(ollamaDir, ollamaExe));
+		} else {
+			console.error('Download failed or file not found.');
+		}
 		} else if (platform === 'linux') {
-			// await $`tar -xzf "${downloadPath}" -C "${ollamaDir}"`;
-			// await fs.rename(path.join(ollamaDir, 'ollama'), path.join(ollamaDir, ollamaExe));
+			await $`tar -xzf "${downloadPath}" -C "${ollamaDir}"`;
+			await fs.rename(path.join(ollamaDir, 'ollama'), path.join(ollamaDir, ollamaExe));
 		} else if (platform === 'macos') {
 			// just copy to both archs
 			await fs.copyFile(downloadPath, path.join(ollamaDir, "ollama-aarch64-apple-darwin"));

@@ -588,144 +588,133 @@ export function Settings({ className }: { className?: string }) {
                 local machine or elsewhere and the exact model name.
               </p>
 
-              {currentPlatform === "macos" && (
-                <>
-                  <Separator className="my-4" />
+              <Separator className="my-4" />
 
+              <div className="w-full">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center min-w-[80px] justify-end">
+                    <Label htmlFor="embeddedLLM" className="text-right mr-2">
+                      embedded ai
+                    </Label>
+                    <Badge variant="outline" className="ml-2">
+                      experimental
+                    </Badge>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-4 w-4 cursor-help ml-2" />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-[300px]">
+                          <p>
+                            enable this to use local ai features in screenpipe.
+                            this is an experimental feature that may be unstable
+                            or change in future updates. you can use it through
+                            search or pipes for enhanced functionality without
+                            relying on external services.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <Switch
+                      id="embeddedLLM"
+                      checked={localSettings.embeddedLLM.enabled}
+                      onCheckedChange={handleEmbeddedLLMChange}
+                    />
+                    <Button
+                      onClick={startOllamaSidecar}
+                      disabled={
+                        !localSettings.embeddedLLM.enabled ||
+                        ollamaStatus === "running"
+                      }
+                      className="ml-auto"
+                    >
+                      {ollamaStatus === "running" ? (
+                        <Check className="h-4 w-4 mr-2" />
+                      ) : ollamaStatus === "error" ? (
+                        <X className="h-4 w-4 mr-2" />
+                      ) : ollamaStatus === "idle" ? (
+                        <Play className="h-4 w-4 mr-2" />
+                      ) : (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      )}
+                      {ollamaStatus === "running"
+                        ? "running"
+                        : ollamaStatus === "error"
+                        ? "error"
+                        : "start ai"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={handleStopLLM}
+                      className="ml-auto"
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      stop ai
+                    </Button>
+                    <LogFileButton />
+                  </div>
+                </div>
+              </div>
+
+              {localSettings.embeddedLLM.enabled && (
+                <>
                   <div className="w-full">
                     <div className="flex items-center gap-4 mb-4">
-                      <div className="flex items-center min-w-[80px] justify-end">
-                        <Label
-                          htmlFor="embeddedLLM"
-                          className="text-right mr-2"
-                        >
-                          embedded ai
-                        </Label>
-                        <Badge variant="outline" className="ml-2">
-                          experimental
-                        </Badge>
+                      <Label
+                        htmlFor="embeddedLLMModel"
+                        className="min-w-[80px] text-right"
+                      >
+                        llm model
+                      </Label>
+                      <div className="flex-grow flex items-center">
+                        <Input
+                          id="embeddedLLMModel"
+                          value={localSettings.embeddedLLM.model}
+                          onChange={handleEmbeddedLLMModelChange}
+                          className="flex-grow"
+                          placeholder="enter embedded llm model"
+                        />
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <HelpCircle className="h-4 w-4 cursor-help ml-2" />
+                              <HelpCircle className="ml-2 h-4 w-4 cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent
                               side="right"
                               className="max-w-[300px]"
                             >
                               <p>
-                                enable this to use local ai features in
-                                screenpipe. this is an experimental feature that
-                                may be unstable or change in future updates. you
-                                can use it through search or pipes for enhanced
-                                functionality without relying on external
-                                services.
+                                supported models are the same as ollama. check
+                                the ollama documentation for a list of available
+                                models.
                               </p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <Switch
-                          id="embeddedLLM"
-                          checked={localSettings.embeddedLLM.enabled}
-                          onCheckedChange={handleEmbeddedLLMChange}
-                        />
-                        <Button
-                          onClick={startOllamaSidecar}
-                          disabled={
-                            !localSettings.embeddedLLM.enabled ||
-                            ollamaStatus === "running"
-                          }
-                          className="ml-auto"
-                        >
-                          {ollamaStatus === "running" ? (
-                            <Check className="h-4 w-4 mr-2" />
-                          ) : ollamaStatus === "error" ? (
-                            <X className="h-4 w-4 mr-2" />
-                          ) : ollamaStatus === "idle" ? (
-                            <Play className="h-4 w-4 mr-2" />
-                          ) : (
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          )}
-                          {ollamaStatus === "running"
-                            ? "running"
-                            : ollamaStatus === "error"
-                            ? "error"
-                            : "start ai"}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          onClick={handleStopLLM}
-                          className="ml-auto"
-                        >
-                          <X className="h-4 w-4 mr-2" />
-                          stop ai
-                        </Button>
-                        <LogFileButton />
-                      </div>
                     </div>
                   </div>
 
-                  {localSettings.embeddedLLM.enabled && (
-                    <>
-                      <div className="w-full">
-                        <div className="flex items-center gap-4 mb-4">
-                          <Label
-                            htmlFor="embeddedLLMModel"
-                            className="min-w-[80px] text-right"
-                          >
-                            llm model
-                          </Label>
-                          <div className="flex-grow flex items-center">
-                            <Input
-                              id="embeddedLLMModel"
-                              value={localSettings.embeddedLLM.model}
-                              onChange={handleEmbeddedLLMModelChange}
-                              className="flex-grow"
-                              placeholder="enter embedded llm model"
-                            />
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <HelpCircle className="ml-2 h-4 w-4 cursor-help" />
-                                </TooltipTrigger>
-                                <TooltipContent
-                                  side="right"
-                                  className="max-w-[300px]"
-                                >
-                                  <p>
-                                    supported models are the same as ollama.
-                                    check the ollama documentation for a list of
-                                    available models.
-                                  </p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="w-full">
-                        <div className="flex items-center gap-4 mb-4">
-                          <Label
-                            htmlFor="embeddedLLMPort"
-                            className="min-w-[80px] text-right"
-                          >
-                            llm port
-                          </Label>
-                          <Input
-                            id="embeddedLLMPort"
-                            type="number"
-                            value={localSettings.embeddedLLM.port}
-                            onChange={handleEmbeddedLLMPortChange}
-                            className="flex-grow"
-                            placeholder="enter embedded llm port"
-                          />
-                        </div>
-                      </div>
-                    </>
-                  )}
+                  <div className="w-full">
+                    <div className="flex items-center gap-4 mb-4">
+                      <Label
+                        htmlFor="embeddedLLMPort"
+                        className="min-w-[80px] text-right"
+                      >
+                        llm port
+                      </Label>
+                      <Input
+                        id="embeddedLLMPort"
+                        type="number"
+                        value={localSettings.embeddedLLM.port}
+                        onChange={handleEmbeddedLLMPortChange}
+                        className="flex-grow"
+                        placeholder="enter embedded llm port"
+                      />
+                    </div>
+                  </div>
                 </>
               )}
             </CardContent>
